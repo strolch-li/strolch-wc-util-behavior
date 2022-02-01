@@ -1,0 +1,216 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<script>
+
+    // custom behaviour accessing the configuration above
+    StrolchUtilBehaviorImpl = {
+        
+        /*
+         * Strolch functions
+         */
+        hasQueryPrivilege: function (privilegeValue) {
+            return Strolch.hasRole('StrolchAdmin') || Strolch.hasQueryPrivilege(privilegeValue);
+        },
+        hasSearchPrivilege: function (privilegeValue) {
+            return Strolch.hasRole('StrolchAdmin') || Strolch.hasSearchPrivilege(privilegeValue);
+        },
+        hasServicePrivilege: function (privilegeValue) {
+            return Strolch.hasRole('StrolchAdmin') || Strolch.hasServicePrivilege(privilegeValue);
+        },
+        hasPrivilege: function (privilege, value) {
+            return Strolch.hasRole('StrolchAdmin') || Strolch.hasPrivilege(privilege, value);
+        },
+        hasRole: function (name) {
+            return Strolch.hasRole('StrolchAdmin') || Strolch.hasRole(name);
+        },
+        hasComponent: function (name) {
+            return Strolch.hasComponent(name);
+        },
+
+        /*
+         * Compute functions
+         */
+        hasMsg: function (value) {
+            return Strolch.isNotEmptyString(value) && value !== "-";
+        },
+
+        isEqual: function (v1, v2) {
+            return Strolch.isEqual(v1, v2);
+        },
+        stringToArray: function (string) {
+            return Strolch.stringToArray(string);
+        },
+        stringArrayLength: function (string) {
+            return Strolch.stringArrayLength(string);
+        },
+        isDefined: function (arg0) {
+            return Strolch.isDefined(arg0);
+        },
+        isNull: function (arg0) {
+            return Strolch.isNull(arg0);
+        },
+        isNotNull: function (arg0) {
+            return Strolch.isNotNull(arg0);
+        },
+        isNaN: function (arg0) {
+            return Strolch.isNaN(arg0);
+        },
+        equal: function (arg0, arg1) {
+            return Strolch.equal(arg0, arg1);
+        },
+        notEqual: function (arg0, arg1) {
+            return Strolch.notEqual(arg0, arg1);
+        },
+        defined: function (arg0) {
+            return Strolch.defined(arg0);
+        },
+        greater: function (arg0, arg1) {
+            return Strolch.greater(arg0, arg1);
+        },
+        greaterEqual: function (arg0, arg1) {
+            return Strolch.greaterEqual(arg0, arg1);
+        },
+        lesser: function (arg0, arg1) {
+            return Strolch.lesser(arg0, arg1);
+        },
+        lesserEqual: function (arg0, arg1) {
+            return Strolch.lesserEqual(arg0, arg1);
+        },
+        and: function (arg0, arg1) {
+            return Strolch.and(arg0, arg1);
+        },
+        or: function (arg0, arg1) {
+            return Strolch.or(arg0, arg1);
+        },
+        arrayLength: function (array) {
+            return Strolch.arrayLength(array);
+        },
+        arrayEmpty: function (array) {
+            return !array || !Strolch.arrayFilled(array);
+        },
+        arrayFilled: function (array) {
+            return Strolch.arrayFilled(array);
+        },
+        arraySizeLessThan: function (array, size) {
+            return Strolch.arraySizeLessThan(array, size);
+        },
+        arraySizeGreaterThanOrEq: function (array, size) {
+            return Strolch.arraySizeGreaterThanOrEq(array, size);
+        },
+        arrayEquals: function (array1, array2) {
+            return Strolch.arrayEquals(array1, array2);
+        },
+        add: function (arg0, arg1) {
+            return Strolch.add(arg0, arg1);
+        },
+        sub: function (arg0, arg1) {
+            return Strolch.sub(arg0, arg1);
+        },
+        round: function (value) {
+            return Strolch.round(value);
+        },
+        stringEmpty: function () {
+            return Strolch.stringEmpty(arguments);
+        },
+        isEmptyString: function (val) {
+            return Strolch.isEmptyString(val);
+        },
+        isNotEmptyString: function (val) {
+            return Strolch.isNotEmptyString(val);
+        },
+
+        isChrome: function () {
+            return Strolch.isChrome();
+        },
+        isFirefox: function () {
+            return Strolch.isFirefox();
+        },
+        isIE: function () {
+            return Strolch.isIE();
+        },
+        isEdge: function () {
+            return Strolch.isEdge();
+        },
+
+        /*
+         * Date Time functions
+         */
+        formatDateTime: function (string) {
+            if (string == null || string.length === 0 || string === "1970-01-01T01:00:00+01:00")
+                return "-";
+            return Strolch.toLocalDateTime(string);
+        },
+
+        // gets the clock time as displayed in the UI
+        getTimeString: function (datetime) {
+            return Strolch.getTimeString(datetime);
+        },
+
+        // gets the calendar date as displayed in the UI
+        getDateString: function (datetime, addCentury) {
+            return Strolch.getDateString(datetime, addCentury);
+        },
+
+        // gets the date of a date string from getDateString()
+        getDate: function (datetimeString) {
+            return Strolch.getDate(datetimeString);
+        },
+
+        // gets the clock time of the current time
+        getCurrentTimeString: function () {
+            return Strolch.getCurrentTimeString();
+        },
+
+        toDateTimeNoDelim: function (val) {
+            return Strolch.toDateTimeNoDelim(val);
+        },
+
+        // gets the calendar date of the current time
+        getCurrentDateString: function () {
+            return Strolch.getDateString(new Date());
+        },
+
+        clearTime: function (date) {
+            return Strolch.clearTime(date);
+        },
+        dateToJson: function (date) {
+            return Strolch.dateToJson(date);
+        },
+
+        // returns true if a datetime has past
+        isPast: function (datetime) {
+            return Strolch.isPast(datetime);
+        },
+
+        // returns true if a datetime is future
+        isFuture: function (datetime) {
+            return Strolch.isFuture(datetime);
+        },
+
+        // turns hours into milliseconds
+        hToMs: function (hour) {
+            return Strolch.hToMs(hour);
+        },
+
+        // turns milliseconds into hours
+        msToH: function (milliseconds) {
+            return Strolch.msToH(milliseconds);
+        },
+
+        /*
+         * Cookie functions
+         */
+        getCookie: function (cname) {
+            return Strolch.getCookie(cname);
+        },
+        setCookie: function (cname, cvalue, expiration) {
+            Strolch.setCookie(cname, cvalue, expiration);
+        },
+        deleteCookie: function (cname) {
+            Strolch.deleteCookie(cname);
+        }
+
+    };
+
+    StrolchUtilBehavior = [StrolchUtilBehaviorImpl];
+</script>

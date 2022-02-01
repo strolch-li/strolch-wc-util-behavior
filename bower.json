@@ -1,0 +1,26 @@
+{
+  "name": "strolch-wc-util-behavior",
+  "description": "Strolch Polymer Util Behavior",
+  "version": "0.1.0",
+  "authors": [
+    "Robert von Burg"
+  ],
+  "keywords": [
+    "strolch",
+    "util"
+  ],
+  "main": "strolch-wc-util-behavior.html",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strolch-li/strolch-wc-util-behavior.git"
+  },
+  "license": "https://github.com/strolch-li/strolch-wc-util-behavior/LICENSE",
+  "homepage": "https://github.com/strolch-li/strolch-wc-util-behavior",
+  "ignore": [],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.11.3",
+
+    "strolchjs": "strolch-li/strolchjs#^0.4.3"
+  }
+}
