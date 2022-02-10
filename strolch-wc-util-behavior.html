@@ -4,7 +4,7 @@
 
     // custom behaviour accessing the configuration above
     StrolchUtilBehaviorImpl = {
-        
+
         /*
          * Strolch functions
          */
@@ -23,183 +23,519 @@
         hasRole: function (name) {
             return Strolch.hasRole('StrolchAdmin') || Strolch.hasRole(name);
         },
+        hasFeatureRole: function (name) {
+            return Strolch.hasRole(name);
+        },
+        hasAnyFeatureRole: function () {
+            for (var i = 0; i < arguments.length; i++) {
+                if (Strolch.hasRole(arguments[i]))
+                    return true;
+            }
+
+            return false;
+        },
         hasComponent: function (name) {
             return Strolch.hasComponent(name);
         },
 
         /*
-         * Compute functions
+         * Boolean functions
          */
-        hasMsg: function (value) {
-            return Strolch.isNotEmptyString(value) && value !== "-";
-        },
-
-        isEqual: function (v1, v2) {
-            return Strolch.isEqual(v1, v2);
-        },
-        stringToArray: function (string) {
-            return Strolch.stringToArray(string);
-        },
-        stringArrayLength: function (string) {
-            return Strolch.stringArrayLength(string);
-        },
         isDefined: function (arg0) {
-            return Strolch.isDefined(arg0);
+            return arg0 != undefined;
         },
         isNull: function (arg0) {
-            return Strolch.isNull(arg0);
+            return arg0 == undefined || arg0 == null;
         },
         isNotNull: function (arg0) {
-            return Strolch.isNotNull(arg0);
+            return arg0 != undefined && arg0 != null;
         },
         isNaN: function (arg0) {
-            return Strolch.isNaN(arg0);
+            return this.stringEmpty(arg0) || isNaN(arg0);
         },
         equal: function (arg0, arg1) {
-            return Strolch.equal(arg0, arg1);
+            return arg0 == arg1;
+        },
+        isEqual: function (arg0, arg1) {
+            return arg0 == arg1;
         },
         notEqual: function (arg0, arg1) {
-            return Strolch.notEqual(arg0, arg1);
+            return arg0 != arg1;
         },
         defined: function (arg0) {
-            return Strolch.defined(arg0);
+            return !!arg0;
         },
         greater: function (arg0, arg1) {
-            return Strolch.greater(arg0, arg1);
+            return arg0 > arg1;
         },
         greaterEqual: function (arg0, arg1) {
-            return Strolch.greaterEqual(arg0, arg1);
+            return arg0 >= arg1;
         },
         lesser: function (arg0, arg1) {
-            return Strolch.lesser(arg0, arg1);
+            return arg0 < arg1;
         },
         lesserEqual: function (arg0, arg1) {
-            return Strolch.lesserEqual(arg0, arg1);
+            return arg0 <= arg1;
         },
         and: function (arg0, arg1) {
-            return Strolch.and(arg0, arg1);
+            return !!(arg0 && arg1);
         },
         or: function (arg0, arg1) {
-            return Strolch.or(arg0, arg1);
+            return !!(arg0 || arg1);
+        },
+        andMulti: function () {
+            for (var i = 0; i < arguments.length; i++) {
+                if (!arguments[i])
+                    return false;
+            }
+            return true;
+        },
+        orMulti: function () {
+            for (var i = 0; i < arguments.length; i++) {
+                if (arguments[i])
+                    return true;
+            }
+            return false;
+        },
+
+        //
+        // Array functions
+        //
+        arrayToString: function (array) {
+            if (array == null || array.length === 0)
+                return "";
+            return array.join(", ");
         },
         arrayLength: function (array) {
-            return Strolch.arrayLength(array);
-        },
-        arrayEmpty: function (array) {
-            return !array || !Strolch.arrayFilled(array);
+            return array != null ? array.length : 0;
         },
         arrayFilled: function (array) {
-            return Strolch.arrayFilled(array);
+            return array != null && array.length > 0;
+        },
+        arrayEmpty: function (array) {
+            return array == null || array.length === 0;
         },
         arraySizeLessThan: function (array, size) {
-            return Strolch.arraySizeLessThan(array, size);
+            return array != null && array.length < size;
         },
         arraySizeGreaterThanOrEq: function (array, size) {
-            return Strolch.arraySizeGreaterThanOrEq(array, size);
+            return array != null && array.length >= size;
         },
         arrayEquals: function (array1, array2) {
-            return Strolch.arrayEquals(array1, array2);
+            if (array1 == null && array2 == null)
+                return true;
+            if (array1 == null && array2 != null)
+                return false;
+            if (array2 == null && array1 != null)
+                return false;
+            return (array1.length === array2.length) && array1.every(function (element, index) {
+                return element === array2[index];
+            });
         },
-        add: function (arg0, arg1) {
-            return Strolch.add(arg0, arg1);
+        stringToArray: function (string) {
+            if (string === null || string.length === 0)
+                return [];
+            var a = [];
+            var b = string.split(',');
+            for (var i = 0; i < b.length; i++) {
+                a.push(b[i].trim());
+            }
+            return a;
         },
-        sub: function (arg0, arg1) {
-            return Strolch.sub(arg0, arg1);
+        stringArrayLength: function (string) {
+            if (string === null || string.length === 0)
+                return 0;
+            return string.split(',').length;
         },
-        round: function (value) {
-            return Strolch.round(value);
+
+        //
+        // String functions
+        //
+        stringOrEmpty: function (e) {
+            return e === null || e === undefined ? "" : e;
         },
         stringEmpty: function () {
-            return Strolch.stringEmpty(arguments);
+            for (var i in arguments) {
+                var arg = arguments[i];
+                if (!arg || arg.length === 0) return true;
+            }
+            return false;
         },
         isEmptyString: function (val) {
-            return Strolch.isEmptyString(val);
+            return typeof val == 'undefined' || val == null || val === '';
         },
         isNotEmptyString: function (val) {
-            return Strolch.isNotEmptyString(val);
+            return !this.isEmptyString(val);
+        },
+        formatVerbatimToHtml: function (s) {
+            if (s == null || s.length === 0)
+                return "";
+            return s.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
+        },
+        pad10: function (i) {
+            if (i < 10) return '0' + i;
+            return i;
+        },
+        pad100: function (i) {
+            if (i < 10) return '00' + i;
+            if (i < 100) return '0' + i;
+            return i;
         },
 
+        //
+        // Math functions
+        //
+        add: function (arg0, arg1) {
+            return Number(arg0) + Number(arg1);
+        },
+        sub: function (arg0, arg1) {
+            return Number(arg0) - Number(arg1);
+        },
+        round: function (value) {
+            return Math.round(value * 1000) / 1000;
+        },
+
+        //
+        // i18n functions
+        //
+        hasMsg: function (value) {
+            return this.isNotEmptyString(value) && value !== "-";
+        },
+        localizeJsonMsg: function (jsonMsg) {
+            if (jsonMsg == null)
+                return jsonMsg;
+            if (jsonMsg.values == null || jsonMsg.values.length === 0)
+                return this.localize(jsonMsg.key);
+
+            var values = [jsonMsg.key];
+            var keys = Object.keys(jsonMsg.values);
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                values.push(key);
+                values.push(jsonMsg.values[key]);
+            }
+            return this.localize.apply(null, values);
+        },
+
+        //
+        // Browser check functions
+        //
         isChrome: function () {
-            return Strolch.isChrome();
+            var isChromium = window.chrome, //
+                winNav = window.navigator, //
+                vendorName = winNav.vendor, //
+                isOpera = winNav.userAgent.indexOf("OPR") > -1, //
+                isIEedge = winNav.userAgent.indexOf("Edge") > -1, //
+                isIOSChrome = winNav.userAgent.match("CriOS");
+
+            if (isIOSChrome) {
+                return true;
+            } else if (isChromium !== null && //
+                typeof isChromium !== "undefined" && //
+                vendorName === "Google Inc." && //
+                isOpera === false && //
+                isIEedge === false) {
+                return true;
+            } else {
+                return false;
+            }
         },
         isFirefox: function () {
-            return Strolch.isFirefox();
+            return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         },
         isIE: function () {
-            return Strolch.isIE();
+            var isIE = /*@cc_on!@*/false || !!document.documentMode;
+            return isIE;
         },
         isEdge: function () {
-            return Strolch.isEdge();
+            return !this.isIE() && !!window.StyleMedia;
         },
 
-        /*
-         * Date Time functions
-         */
+        //
+        // Date Time functions
+        //
         formatDateTime: function (string) {
-            if (string == null || string.length === 0 || string === "1970-01-01T01:00:00+01:00")
-                return "-";
             return Strolch.toLocalDateTime(string);
         },
+        parsePeriodUnit: function (p) {
 
-        // gets the clock time as displayed in the UI
-        getTimeString: function (datetime) {
-            return Strolch.getTimeString(datetime);
+            // P3M -> months
+            // P3W -> weeks
+            // P3D -> days
+            // PT3H -> hours
+            // PT3M -> minutes
+
+            if (p == null || p.length < 3 || p === "PT0S" || p === "P0S")
+                return [0, "seconds"];
+
+            var value;
+            if (p.charAt(1) === 'T') {
+                value = Number.parseInt(p.substring(2, p.length - 1));
+                switch (p.charAt(p.length - 1)) {
+                    case "H":
+                        return [value, "hours"];
+                    case "M":
+                        return [value, "minutes"];
+                    case "S":
+                        return [value, "seconds"];
+                    default:
+                        throw "Unhandled Period " + p;
+                }
+            }
+
+            value = Number.parseInt(p.substring(1, p.length - 1));
+            switch (p.charAt(p.length - 1)) {
+                case "M":
+                    return [value, "months"];
+                case "W":
+                    return [value, "weeks"];
+                case "D":
+                    return [value, "days"];
+                default:
+                    throw "Unhandled Period " + p;
+            }
         },
+        formatPeriod: function (p) {
+            if (p == null || p.length < 3)
+                return "-";
 
+            // P1D
+            // P1Y2M3DT4H5M6S
+            // PT1H1M
+
+            var i = 0;
+            if (p.charAt(i) !== 'P')
+                throw "Illegal ISO8601 Period!";
+            i++;
+
+            var result = this.localize("every") + " ";
+
+            // period part
+            var pos;
+            var val;
+            if (p.charAt(i) !== 'T') {
+                var timePartPos = p.indexOf('T');
+                if (timePartPos < 0)
+                    timePartPos = p.length;
+
+                // year
+                pos = p.indexOf('Y', i);
+                if (pos > 0) {
+                    val = Number.parseFloat(p.substring(i, pos));
+                    if (val > 0)
+                        result += val + " " + this.localize('years') + " ";
+                    i = pos + 1;
+                }
+
+                // month
+                pos = p.indexOf('M', i);
+                if (pos > 0 && pos < timePartPos) {
+                    val = Number.parseFloat(p.substring(i, pos));
+                    if (val > 0)
+                        result += val + " " + this.localize('months') + " ";
+                    i = pos + 1;
+                }
+
+                // day
+                pos = p.indexOf('D', i);
+                if (pos > 0) {
+                    val = Number.parseFloat(p.substring(i, pos));
+                    if (val > 0)
+                        result += val + " " + this.localize('days') + " ";
+                    i = pos + 1;
+                }
+            }
+            i++;
+
+            // time part
+
+            // hour
+            pos = p.indexOf('H', i);
+            if (pos > 0) {
+                val = Number.parseFloat(p.substring(i, pos));
+                if (val > 0)
+                    result += val + " " + this.localize('hours') + " ";
+                i = pos + 1;
+            }
+
+            // minute
+            pos = p.indexOf('M', i);
+            if (pos > 0) {
+                val = Number.parseFloat(p.substring(i, pos));
+                if (val > 0)
+                    result += val + " " + this.localize('minutes') + " ";
+                i = pos + 1;
+            }
+
+            // seconds
+            pos = p.indexOf('S', i);
+            if (pos > 0) {
+                val = Number.parseFloat(p.substring(i, pos));
+                if (val > 0)
+                    result += val + " " + this.localize('seconds') + " ";
+                i = pos + 1;
+            }
+
+            return result;
+        },
+        formatDateTimePaddedWithSeconds: function (value) {
+            return this.formatDateTime(value, true);
+        },
+        formatDateTimePadded: function (value, withSeconds) {
+            var dateTime;
+            if (value == null || value === "" || value === "-" || value === "1970-01-01T01:00:00+01:00")
+                return "-";
+            if (typeof (value) === "string") {
+                dateTime = new Date(value);
+            } else if (value instanceof Date) {
+                dateTime = value;
+            } else {
+                throw "Unhandled object type " + typeof (value) + ": " + value;
+            }
+
+            return this.getDateString(dateTime, true) + " " + this.getTimeString(dateTime, withSeconds);
+        },
+        // gets the clock time as displayed in the UI
+        getTimeString: function (datetime, withSeconds) {
+            var hours = datetime.getHours().toString();
+            var minutes = datetime.getMinutes().toString();
+
+            hours = hours.length < 2 ? "0" + hours : hours;
+            minutes = minutes.length < 2 ? "0" + minutes : minutes;
+
+            if (!withSeconds)
+                return hours + ":" + minutes;
+
+            var seconds = datetime.getSeconds().toString();
+            seconds = seconds.length < 2 ? "0" + seconds : seconds;
+            return hours + ":" + minutes + "." + seconds;
+        },
+        getDateWithTimeString: function (date, timeString) {
+            var hourMin = timeString.split(":");
+            if (hourMin.length !== 2)
+                throw "TimeString " + timeString + " has invalid format!";
+
+            date.setHours(Number.parseInt(hourMin[0]));
+            date.setMinutes(Number.parseInt(hourMin[1]));
+            return date;
+        },
         // gets the calendar date as displayed in the UI
         getDateString: function (datetime, addCentury) {
-            return Strolch.getDateString(datetime, addCentury);
-        },
+            if (datetime == null)
+                return "";
 
+            if (typeof (datetime) == 'string') {
+                datetime = new Date(datetime);
+            }
+
+            var day = (datetime.getDate()).toString();
+            var month = (datetime.getMonth() + 1).toString();
+            var year = (datetime.getFullYear()).toString();
+
+            day = day.length < 2 ? "0" + day : day;
+            month = month.length < 2 ? "0" + month : month;
+            year = addCentury ? year : year.slice(-2);
+            return day + "." + month + "." + year;
+        },
         // gets the date of a date string from getDateString()
         getDate: function (datetimeString) {
-            return Strolch.getDate(datetimeString);
-        },
+            if (datetimeString == null || datetimeString.length === "")
+                return null;
 
+            if (datetimeString.indexOf("T") === 10) {
+                return new Date(datetimeString.substring(0, 10));
+            } else if (datetimeString.length === 10 && datetimeString.indexOf("-") === 4) {
+                return new Date(datetimeString);
+            }
+
+            var splitString = datetimeString.split(".");
+            if (splitString.length !== 3) return null;
+
+            var year = Number(splitString[2]);
+            var month = Number(splitString[1]) - 1;
+            var day = Number(splitString[0]);
+            return new Date(year, month, day);
+        },
         // gets the clock time of the current time
         getCurrentTimeString: function () {
-            return Strolch.getCurrentTimeString();
+            return this.getTimeString(new Date());
         },
+        toDateTime: function (val) {
+            if (this.isEmptyString(val) || val === '-') return '-';
+            var date = new Date(val);
 
+            var y = date.getFullYear();
+            var m = this.pad10(date.getMonth() + 1);
+            var d = this.pad10(date.getDate());
+            var h = this.pad10(date.getHours());
+            var mi = this.pad10(date.getMinutes());
+            var s = this.pad10(date.getSeconds());
+
+            return y + m + d + h + mi + s;
+        },
         toDateTimeNoDelim: function (val) {
-            return Strolch.toDateTimeNoDelim(val);
+            return this.toDateTime(val);
         },
-
         // gets the calendar date of the current time
         getCurrentDateString: function () {
-            return Strolch.getDateString(new Date());
+            return this.getDateString(new Date());
         },
-
         clearTime: function (date) {
-            return Strolch.clearTime(date);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+
+            return date;
         },
         dateToJson: function (date) {
-            return Strolch.dateToJson(date);
+            date.setTime(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+            return date.toJSON();
         },
-
+        dateToIso: function (date) {
+            if (date == null || date === "") {
+                return null;
+            }
+            var tzo = -date.getTimezoneOffset(),
+                dif = tzo >= 0 ? '+' : '-',
+                pad = function (num) {
+                    var norm = Math.floor(Math.abs(num));
+                    return (norm < 10 ? '0' : '') + norm;
+                };
+            return date.getFullYear() +
+                '-' + pad(date.getMonth() + 1) +
+                '-' + pad(date.getDate()) +
+                'T' + pad(date.getHours()) +
+                ':' + pad(date.getMinutes()) +
+                ':' + pad(date.getSeconds()) +
+                dif + pad(tzo / 60) +
+                ':' + pad(tzo % 60);
+        },
+        truncateTime: function (date) {
+            date.setTime(date.getTime() - (-date.getTimezoneOffset() * 60 * 1000));
+            date.setHours(0, 0, 0, 0);
+            return date;
+        },
         // returns true if a datetime has past
         isPast: function (datetime) {
-            return Strolch.isPast(datetime);
+            return Date.now() > datetime.getTime();
         },
-
         // returns true if a datetime is future
         isFuture: function (datetime) {
-            return Strolch.isFuture(datetime);
+            return Date.now() < datetime.getTime();
         },
-
         // turns hours into milliseconds
         hToMs: function (hour) {
-            return Strolch.hToMs(hour);
+            return hour * 3600000;
         },
-
         // turns milliseconds into hours
         msToH: function (milliseconds) {
-            return Strolch.msToH(milliseconds);
+            return milliseconds / 3600000;
         },
 
-        /*
-         * Cookie functions
-         */
+        //
+        // Cookie functions
+        //
         getCookie: function (cname) {
             return Strolch.getCookie(cname);
         },
@@ -208,8 +544,193 @@
         },
         deleteCookie: function (cname) {
             Strolch.deleteCookie(cname);
-        }
+        },
 
+        //
+        // URL query functions
+        //
+        parseQueryParams: function (queryParamsS) {
+            var params = {};
+            if (queryParamsS.length === 0)
+                return {};
+
+            var queryParams = queryParamsS.split("&");
+            for (var i = 0; i < queryParams.length; i++) {
+                var queryParam = queryParams[i];
+                var parts = queryParam.split("=");
+                if (parts.length !== 2) {
+                    console.log("Ignoring bad query param " + queryParam);
+                    continue;
+                }
+
+                var key = parts[0];
+                params[key] = parts[1];
+            }
+
+            return params;
+        },
+        removeQueryParamsFromPath: function (path) {
+            var queryParamsIndex = path.indexOf("?");
+            if (queryParamsIndex < 0) {
+                return {
+                    path: path,
+                    params: null
+                };
+            }
+
+            var returnPath = path.substring(0, queryParamsIndex);
+            var queryParams = this.parseQueryParams(path.substring(queryParamsIndex + 1));
+
+            return {
+                path: returnPath,
+                params: queryParams
+            };
+        },
+        // finds a path param of the form '/pathParam/{pathParamValue}/' and returns its value
+        findUrlPathParam: function (urlPath, pathParam) {
+            var regex = new RegExp("\/" + pathParam + "\/([^\/]+)", "i");
+            var matches = regex.exec(urlPath);
+            return matches && matches[1] ? matches[1] : null;
+        },
+        // add a sub route to the current path
+        pushSubRoutePath: function (route, routePath) {
+            var baseUrl = document.URL.substring(0, document.URL.indexOf("#") + 1);
+            var pushUrl = baseUrl + route.prefix + routePath;
+            history.pushState(null, null, pushUrl);
+        },
+        getPageId: function () {
+            var parts = document.location.hash.split("/");
+            if (parts[0] !== "#" || parts.length < 2)
+                return "";
+            return parts[1];
+        },
+        getQueryParamsAsString: function () {
+            return Strolch.getQueryParamsAsString();
+        },
+        getQueryParamValue: function (paramName) {
+            return Strolch.getQueryParamValue(paramName);
+        },
+        setQueryParamValue: function (paramName, paramValue) {
+            Strolch.setQueryParamValue(paramName, paramValue);
+        },
+        setQueryParamsFromObject: function (object) {
+            Object.keys(object).forEach(function (key) {
+                this.setQueryParamValue(key, object[key]);
+            }.bind(this));
+        },
+
+        //
+        // Navigation functions
+        //
+        // fires an event that will change the page of the app
+        changePage: function (page, keepQueryParams) {
+            this.fire("strolch-change-page", {
+                page: page,
+                keepQueryParams: typeof keepQueryParams === 'boolean' && keepQueryParams
+            });
+        },
+
+        //
+        // AJAX response helpers
+        //
+        // convenience function to get the error message from responses
+        requestEventToUrl: function (event) {
+            return event.detail.detail.request.url;
+        },
+        onRequestError: function (event) {
+            var readyState = event.detail.request.xhr.readyState;
+            var status = event.detail.request.xhr.status;
+
+            if (readyState === 4 && status === 0) {
+                this.fire("strolch-server-not-available", event);
+            } else if (status === 401) {
+                this.fire("strolch-session-invalid", event);
+            } else if (status === 403) {
+                this.fire("strolch-privilege-denied", event);
+            } else {
+                this.requestErrorToMsg(event);
+            }
+        },
+        requestErrorToMsg: function (event) {
+
+            var response;
+            if (event.detail.request)
+                response = event.detail.request.xhr.response;
+            else
+                response = event.detail.detail.error.message;
+
+            var msg = "";
+            var isError = false;
+
+            if (response && response.state) {
+                isError = response.state === "EXCEPTION";
+            }
+
+            if (response && response.i18n) {
+                var args = [response.i18n.key];
+                if (response.i18n.values != null) {
+                    Object.keys(response.i18n.values).forEach(function (key) {
+                        args.push(key);
+                        args.push(response.i18n.values[key]);
+                    });
+                }
+                msg = this.localize.apply(this, args);
+            } else {
+
+                if (response && response.msg) {
+                    msg = response.msg;
+                } else if (typeof (response) == 'string') {
+                    if (response.trim().charAt(0) === '{') {
+                        var json = JSON.parse(response);
+
+                        if (json && json.i18n) {
+                            var args = [json.i18n.key];
+                            if (json.i18n.values != null) {
+                                Object.keys(json.i18n.values).forEach(function (key) {
+                                    args.push(key);
+                                    args.push(json.i18n.values[key]);
+                                });
+                            }
+                            msg = this.localize.apply(this, args);
+                        } else if (json.msg) {
+                            msg = json.msg;
+                        } else {
+                            msg = response;
+                        }
+                    } else {
+                        msg = response;
+                    }
+                } else if (event.detail && event.detail.error && event.detail.error.message && event.detail.request && event.detail.request.url) {
+                    msg = event.detail.error.message + ": " + event.detail.request.url;
+                } else if (event.detail && event.detail.error && event.detail.error.message) {
+                    msg = event.detail.error.message;
+                } else {
+                    console.error("Missing error message on request error", event);
+                    msg = "Request Failed and no message available!";
+                }
+            }
+
+            this.fire('strolch-show-dialog', {
+                isError: isError,
+                text: msg
+            });
+        },
+
+        //
+        // UI functions
+        //
+        onFocusSelectAll: function (e) {
+            if (e.target.inputElement) {
+                var input = e.target.inputElement;
+                if (typeof input.select === "function") {
+                    input.select();
+                } else if (input.$ && input.$.textarea && typeof input.$.textarea.select === "function") {
+                    input.$.textarea.select();
+                }
+            } else if (e.target.select) {
+                e.target.select();
+            }
+        },
     };
 
     StrolchUtilBehavior = [StrolchUtilBehaviorImpl];
