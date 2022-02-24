@@ -1,7 +1,7 @@
 {
   "name": "strolch-wc-util-behavior",
   "description": "Strolch Polymer Util Behavior",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "authors": [
     "Robert von Burg"
   ],
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/strolch-li/strolch-wc-util-behavior",
   "ignore": [],
   "dependencies": {
-    "strolchjs": "strolch-li/strolchjs#^0.5.0",
+    "strolchjs": "strolch-li/strolchjs#^0.5.1",
 
     "polymer": "Polymer/polymer#^1.11.3"
   }
