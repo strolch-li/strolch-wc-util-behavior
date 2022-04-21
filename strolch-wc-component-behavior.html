@@ -1,0 +1,210 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../strolch-wc-localize-behavior/strolch-wc-localize-behavior.html">
+
+<link rel="import" href="./strolch-wc-util-behavior.html">
+
+<script>
+
+    // custom behaviour accessing the configuration above
+    StrolchComponentBehaviorImpl = {
+
+        //
+        // app functions
+        //
+        clearSearchTerm: function () {
+          this.fire("strolch-clear-search-term");
+        },
+
+        // fires an event that will show a dialog
+        showDialog: function (message, isError) {
+            this.fire("strolch-show-dialog", {
+                message: message,
+                isError: isError
+            });
+        },
+        // fires an event that will show a dialog
+        showDialogTitle: function (title, message) {
+            this.fire("strolch-show-dialog", {
+                title: title,
+                message: message
+            });
+        },
+
+        // fires an event that will show an information dialog, with optional callback
+        showInfo: function (data) {
+            if (data.callback != null)
+                data.callback.bind(this);
+            this.fire("strolch-show-info", data);
+        },
+
+        // fires an event that will show a notification below the toolbar
+        showNotification: function (id, message, faIcon, action1, callback1, action2, callback2, action3, callback3) {
+            this.fire("strolch-show-notification", {
+                id: id,
+                message: message,
+                faIcon: faIcon,
+                action1: action1,
+                callback1: callback1,
+                action2: action2,
+                callback2: callback2,
+                action3: action3,
+                callback3: callback3,
+                bind: this
+            });
+        },
+        clearNotification: function (id) {
+            this.fire("strolch-clear-notification", {
+                id: id
+            });
+        },
+
+        showError: function (title, text) {
+            this.showDialogTitle(title, text, true);
+        },
+
+        showToast: function (text) {
+            this.fire('strolch-show-toast', {text: text});
+        },
+
+        //
+        // Navigation functions
+        //
+        // fires an event that will change the page of the app
+        changePage: function (page, keepQueryParams) {
+            this.fire("strolch-change-page", {
+                page: page,
+                keepQueryParams: typeof keepQueryParams === 'boolean' && keepQueryParams
+            });
+        },
+
+        //
+        // AJAX response helpers
+        //
+
+        localizeJsonMsg: function (jsonMsg) {
+            if (jsonMsg === null)
+                return jsonMsg;
+
+            this.localize.useKeyIfMissing = true;
+
+            try {
+                if (jsonMsg.values === null || Object.keys(jsonMsg.values).length === 0)
+                    return this.localize(jsonMsg.key);
+
+                var values = [jsonMsg.key];
+                var keys = Object.keys(jsonMsg.values);
+                for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    values.push(key);
+                    values.push(jsonMsg.values[key]);
+                }
+                return this.localize.apply(this.localize, values);
+            } catch (e) {
+                console.log(e);
+                return jsonMsg.key;
+            }
+        },
+
+        // convenience function to get the error message from responses
+        requestEventToUrl: function (event) {
+            return event.detail.detail.request.url;
+        },
+        onRequestError: function (event) {
+            var readyState = event.detail.request.xhr.readyState;
+            var status = event.detail.request.xhr.status;
+
+            if (readyState === 4 && status === 0) {
+                this.fire("strolch-server-not-available", event);
+            } else if (status === 401) {
+                this.fire("strolch-session-invalid", event);
+            } else if (status === 403) {
+                this.fire("strolch-privilege-denied", event);
+            } else {
+                this.requestErrorToMsg(event);
+            }
+        },
+        requestErrorToMsg: function (event) {
+
+            var response;
+            if (event.detail.request)
+                response = event.detail.request.xhr.response;
+            else
+                response = event.detail.detail.error.message;
+
+            var msg = "";
+            var isError = false;
+
+            if (response && response.state) {
+                isError = response.state === "EXCEPTION";
+            }
+
+            if (response && response.i18n) {
+                var args = [response.i18n.key];
+                if (response.i18n.values != null) {
+                    Object.keys(response.i18n.values).forEach(function (key) {
+                        args.push(key);
+                        args.push(response.i18n.values[key]);
+                    });
+                }
+                msg = this.localize.apply(this, args);
+            } else {
+
+                if (response && response.msg) {
+                    msg = response.msg;
+                } else if (typeof (response) == 'string') {
+                    if (response.trim().charAt(0) === '{') {
+                        var json = JSON.parse(response);
+
+                        if (json && json.i18n) {
+                            var args = [json.i18n.key];
+                            if (json.i18n.values != null) {
+                                Object.keys(json.i18n.values).forEach(function (key) {
+                                    args.push(key);
+                                    args.push(json.i18n.values[key]);
+                                });
+                            }
+                            msg = this.localize.apply(this, args);
+                        } else if (json.msg) {
+                            msg = json.msg;
+                        } else {
+                            msg = response;
+                        }
+                    } else {
+                        msg = response;
+                    }
+                } else if (event.detail && event.detail.error && event.detail.error.message && event.detail.request && event.detail.request.url) {
+                    msg = event.detail.error.message + ": " + event.detail.request.url;
+                } else if (event.detail && event.detail.error && event.detail.error.message) {
+                    msg = event.detail.error.message;
+                } else {
+                    console.error("Missing error message on request error", event);
+                    msg = "Request Failed and no message available!";
+                }
+            }
+
+            this.fire('strolch-show-dialog', {
+                isError: isError,
+                text: msg
+            });
+        },
+
+        //
+        // UI helper functions
+        //
+        onFocusSelectAll: function (e) {
+            if (e.target.inputElement) {
+                var input = e.target.inputElement;
+                if (typeof input.select === "function") {
+                    input.select();
+                } else if (input.$ && input.$.textarea && typeof input.$.textarea.select === "function") {
+                    input.$.textarea.select();
+                }
+            } else if (e.target.select) {
+                e.target.select();
+            }
+        },
+    };
+
+    StrolchComponentBehavior = [StrolchLocalizeBehavior, StrolchUtilBehavior, StrolchComponentBehaviorImpl];
+</script>
