@@ -24,6 +24,6 @@
 
     "strolch-wc-localize-behavior": "strolch-li/strolch-wc-localize-behavior#^1.1.14",
 
-    "polymer": "Polymer/polymer#^1.11.3"
+    "polymer": "Polymer/polymer#^1.12.0"
   }
 }
