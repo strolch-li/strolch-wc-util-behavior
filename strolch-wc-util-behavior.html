@@ -604,8 +604,14 @@
                 return "";
             return parts[1];
         },
+        clearQueryParams: function () {
+            Strolch.clearQueryParams();
+        },
         getQueryParamsAsString: function () {
             return Strolch.getQueryParamsAsString();
+        },
+        getQueryParamsAsObject: function () {
+            return Strolch.getQueryParamsAsObject();
         },
         getQueryParamValue: function (paramName) {
             return Strolch.getQueryParamValue(paramName);
