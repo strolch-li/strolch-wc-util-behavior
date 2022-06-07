@@ -83,13 +83,13 @@
         //
 
         localizeJsonMsg: function (jsonMsg) {
-            if (jsonMsg === null)
+            if (jsonMsg == null)
                 return jsonMsg;
 
             this.localize.useKeyIfMissing = true;
 
             try {
-                if (jsonMsg.values === null || Object.keys(jsonMsg.values).length === 0)
+                if (jsonMsg.values == null || Object.keys(jsonMsg.values).length === 0)
                     return this.localize(jsonMsg.key);
 
                 var values = [jsonMsg.key];
