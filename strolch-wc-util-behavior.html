@@ -302,6 +302,14 @@
         formatDateTime: function (string) {
             return Strolch.toLocalDateTime(string);
         },
+        formatDateDashIfEmpty: function (string) {
+            if (string == null || string === "" || string === "-" || string === "1970-01-01T01:00:00+01:00")
+                return "-";
+            return Strolch.toLocalDate(string);
+        },
+        formatDate: function (string) {
+            return Strolch.toLocalDate(string);
+        },
         parsePeriodUnit: function (p) {
 
             // P3M -> months
