@@ -310,6 +310,23 @@
         formatDate: function (string) {
             return Strolch.toLocalDate(string);
         },
+        formatDateTimePaddedWithSeconds: function (value) {
+            return this.formatDateTime(value, true);
+        },
+        formatDateTimePadded: function (value, withSeconds) {
+            var dateTime;
+            if (value == null || value === "" || value === "-" || value === "1970-01-01T01:00:00+01:00")
+                return "-";
+            if (typeof (value) === "string") {
+                dateTime = new Date(value);
+            } else if (value instanceof Date) {
+                dateTime = value;
+            } else {
+                throw "Unhandled object type " + typeof (value) + ": " + value;
+            }
+
+            return this.getDateString(dateTime, true) + " " + this.getTimeString(dateTime, withSeconds);
+        },
         parsePeriodUnit: function (p) {
 
             // P3M -> months
@@ -430,23 +447,6 @@
             }
 
             return result;
-        },
-        formatDateTimePaddedWithSeconds: function (value) {
-            return this.formatDateTime(value, true);
-        },
-        formatDateTimePadded: function (value, withSeconds) {
-            var dateTime;
-            if (value == null || value === "" || value === "-" || value === "1970-01-01T01:00:00+01:00")
-                return "-";
-            if (typeof (value) === "string") {
-                dateTime = new Date(value);
-            } else if (value instanceof Date) {
-                dateTime = value;
-            } else {
-                throw "Unhandled object type " + typeof (value) + ": " + value;
-            }
-
-            return this.getDateString(dateTime, true) + " " + this.getTimeString(dateTime, withSeconds);
         },
         // gets the clock time as displayed in the UI
         getTimeString: function (datetime, withSeconds) {
