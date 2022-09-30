@@ -13,7 +13,7 @@
         // app functions
         //
         clearSearchTerm: function () {
-          this.fire("strolch-clear-search-term");
+            this.fire("strolch-clear-search-term");
         },
 
         // fires an event that will show a dialog
@@ -65,6 +65,40 @@
 
         showToast: function (text) {
             this.fire('strolch-show-toast', {text: text});
+        },
+
+        /**
+         * Set an environment property to a localized value
+         * @param version the version response from the server
+         */
+        updateEnvironment: function (version) {
+            if (version == null || version.agentVersion == null || version.agentVersion.environment == null) {
+                this.environment = "-";
+                return;
+            }
+            var environment = version.agentVersion.environment;
+            if (this.localize == null) {
+                this.environment = environment;
+                this.async(function () {
+                    if (this.localize == null) {
+                        console.error("The localize function is still not available after 100ms of waiting! Cancelling.");
+                    } else {
+                        this.updateEnvironment(version);
+                    }
+                }.bind(this), 100);
+                return;
+            }
+            if (environment.indexOf('prod') >= 0) {
+                this.environment = this.localize('production');
+            } else if (environment.indexOf('test') >= 0) {
+                this.environment = this.localize('testing');
+            } else if (environment.indexOf('stag') >= 0) {
+                this.environment = this.localize('staging');
+            } else if (environment.indexOf('dev') >= 0) {
+                this.environment = this.localize('development');
+            } else {
+                this.environment = environment;
+            }
         },
 
         //
