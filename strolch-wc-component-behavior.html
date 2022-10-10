@@ -96,6 +96,8 @@
                 this.environment = this.localize('staging');
             } else if (environment.indexOf('dev') >= 0) {
                 this.environment = this.localize('development');
+            } else if (environment.indexOf('demo') >= 0) {
+                this.environment = this.localize('demo');
             } else {
                 this.environment = environment;
             }
