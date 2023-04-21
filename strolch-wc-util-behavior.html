@@ -9,19 +9,19 @@
          * Strolch functions
          */
         hasQueryPrivilege: function (privilegeValue) {
-            return Strolch.hasRole('StrolchAdmin') || Strolch.hasQueryPrivilege(privilegeValue);
+            return Strolch.hasRole("StrolchAdmin") || Strolch.hasQueryPrivilege(privilegeValue);
         },
         hasSearchPrivilege: function (privilegeValue) {
-            return Strolch.hasRole('StrolchAdmin') || Strolch.hasSearchPrivilege(privilegeValue);
+            return Strolch.hasRole("StrolchAdmin") || Strolch.hasSearchPrivilege(privilegeValue);
         },
         hasServicePrivilege: function (privilegeValue) {
-            return Strolch.hasRole('StrolchAdmin') || Strolch.hasServicePrivilege(privilegeValue);
+            return Strolch.hasRole("StrolchAdmin") || Strolch.hasServicePrivilege(privilegeValue);
         },
         hasPrivilege: function (privilege, value) {
-            return Strolch.hasRole('StrolchAdmin') || Strolch.hasPrivilege(privilege, value);
+            return Strolch.hasRole("StrolchAdmin") || Strolch.hasPrivilege(privilege, value);
         },
         hasRole: function (name) {
-            return Strolch.hasRole('StrolchAdmin') || Strolch.hasRole(name);
+            return Strolch.hasRole("StrolchAdmin") || Strolch.hasRole(name);
         },
         hasFeatureRole: function (name) {
             return Strolch.hasRole(name);
@@ -136,7 +136,7 @@
             if (string === null || string.length === 0)
                 return [];
             var a = [];
-            var b = string.split(',');
+            var b = string.split(",");
             for (var i = 0; i < b.length; i++) {
                 a.push(b[i].trim());
             }
@@ -145,7 +145,7 @@
         stringArrayLength: function (string) {
             if (string === null || string.length === 0)
                 return 0;
-            return string.split(',').length;
+            return string.split(",").length;
         },
 
         //
@@ -162,7 +162,7 @@
             return false;
         },
         isEmptyString: function (val) {
-            return typeof val == 'undefined' || val == null || val === '';
+            return typeof val == "undefined" || val == null || val === "";
         },
         isNotEmptyString: function (val) {
             return !this.isEmptyString(val);
@@ -170,15 +170,15 @@
         formatVerbatimToHtml: function (s) {
             if (s == null || s.length === 0)
                 return "";
-            return s.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
+            return s.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
         },
         pad10: function (i) {
-            if (i < 10) return '0' + i;
+            if (i < 10) return "0" + i;
             return i;
         },
         pad100: function (i) {
-            if (i < 10) return '00' + i;
-            if (i < 100) return '0' + i;
+            if (i < 10) return "00" + i;
+            if (i < 100) return "0" + i;
             return i;
         },
 
@@ -205,34 +205,34 @@
          */
         _decimalAdjust: function (type, value, exp) {
             // If the exp is undefined or zero...
-            if (typeof exp === 'undefined' || +exp === 0) {
+            if (typeof exp === "undefined" || +exp === 0) {
                 return Math[type](value);
             }
             value = +value;
             exp = +exp;
             // If the value is not a number or the exp is not an integer...
-            if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+            if (isNaN(value) || !(typeof exp === "number" && exp % 1 === 0)) {
                 return NaN;
             }
             // Shift
-            value = value.toString().split('e');
-            value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+            value = value.toString().split("e");
+            value = Math[type](+(value[0] + "e" + (value[1] ? (+value[1] - exp) : -exp)));
             // Shift back
-            value = value.toString().split('e');
-            return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+            value = value.toString().split("e");
+            return +(value[0] + "e" + (value[1] ? (+value[1] + exp) : exp));
         },
 
         // Decimal round
         round10: function (value, exp) {
-            return this._decimalAdjust('round', value, exp);
+            return this._decimalAdjust("round", value, exp);
         },
         // Decimal floor
         floor10: function (value, exp) {
-            return this._decimalAdjust('floor', value, exp);
+            return this._decimalAdjust("floor", value, exp);
         },
         // Decimal ceil
         ceil10: function (value, exp) {
-            return this._decimalAdjust('ceil', value, exp);
+            return this._decimalAdjust("ceil", value, exp);
         },
 
         //
@@ -244,6 +244,8 @@
         localizeJsonMsg: function (jsonMsg) {
             if (jsonMsg == null)
                 return jsonMsg;
+            if (this.localize == null)
+                return jsonMsg.message;
             if (jsonMsg.values == null || jsonMsg.values.length === 0)
                 return this.localize(jsonMsg.key);
 
@@ -281,7 +283,7 @@
             }
         },
         isFirefox: function () {
-            return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+            return navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
         },
         isIE: function () {
             var isIE = /*@cc_on!@*/false || !!document.documentMode;
@@ -339,7 +341,7 @@
                 return [0, "seconds"];
 
             var value;
-            if (p.charAt(1) === 'T') {
+            if (p.charAt(1) === "T") {
                 value = Number.parseInt(p.substring(2, p.length - 1));
                 switch (p.charAt(p.length - 1)) {
                     case "H":
@@ -374,44 +376,44 @@
             // PT1H1M
 
             var i = 0;
-            if (p.charAt(i) !== 'P')
+            if (p.charAt(i) !== "P")
                 throw "Illegal ISO8601 Period!";
             i++;
 
-            var result = this.localize("every") + " ";
+            var result = (this.localize == null ? "every" : this.localize("every")) + " ";
 
             // period part
             var pos;
             var val;
-            if (p.charAt(i) !== 'T') {
-                var timePartPos = p.indexOf('T');
+            if (p.charAt(i) !== "T") {
+                var timePartPos = p.indexOf("T");
                 if (timePartPos < 0)
                     timePartPos = p.length;
 
                 // year
-                pos = p.indexOf('Y', i);
+                pos = p.indexOf("Y", i);
                 if (pos > 0) {
                     val = Number.parseFloat(p.substring(i, pos));
                     if (val > 0)
-                        result += val + " " + this.localize('years') + " ";
+                        result += val + " " + (this.localize == null ? "years" : this.localize("years")) + " ";
                     i = pos + 1;
                 }
 
                 // month
-                pos = p.indexOf('M', i);
+                pos = p.indexOf("M", i);
                 if (pos > 0 && pos < timePartPos) {
                     val = Number.parseFloat(p.substring(i, pos));
                     if (val > 0)
-                        result += val + " " + this.localize('months') + " ";
+                        result += val + " " + (this.localize == null ? "months" : this.localize("months")) + " ";
                     i = pos + 1;
                 }
 
                 // day
-                pos = p.indexOf('D', i);
+                pos = p.indexOf("D", i);
                 if (pos > 0) {
                     val = Number.parseFloat(p.substring(i, pos));
                     if (val > 0)
-                        result += val + " " + this.localize('days') + " ";
+                        result += val + " " + (this.localize == null ? "days" : this.localize("days")) + " ";
                     i = pos + 1;
                 }
             }
@@ -420,29 +422,29 @@
             // time part
 
             // hour
-            pos = p.indexOf('H', i);
+            pos = p.indexOf("H", i);
             if (pos > 0) {
                 val = Number.parseFloat(p.substring(i, pos));
                 if (val > 0)
-                    result += val + " " + this.localize('hours') + " ";
+                    result += val + " " + (this.localize == null ? "hours" : this.localize("hours")) + " ";
                 i = pos + 1;
             }
 
             // minute
-            pos = p.indexOf('M', i);
+            pos = p.indexOf("M", i);
             if (pos > 0) {
                 val = Number.parseFloat(p.substring(i, pos));
                 if (val > 0)
-                    result += val + " " + this.localize('minutes') + " ";
+                    result += val + " " + (this.localize == null ? "minutes" : this.localize("minutes")) + " ";
                 i = pos + 1;
             }
 
             // seconds
-            pos = p.indexOf('S', i);
+            pos = p.indexOf("S", i);
             if (pos > 0) {
                 val = Number.parseFloat(p.substring(i, pos));
                 if (val > 0)
-                    result += val + " " + this.localize('seconds') + " ";
+                    result += val + " " + (this.localize == null ? "seconds" : this.localize("seconds")) + " ";
                 i = pos + 1;
             }
 
@@ -477,7 +479,7 @@
             if (datetime == null)
                 return "";
 
-            if (typeof (datetime) == 'string') {
+            if (typeof (datetime) == "string") {
                 datetime = new Date(datetime);
             }
 
@@ -514,7 +516,7 @@
             return this.getTimeString(new Date());
         },
         toDateTime: function (val) {
-            if (this.isEmptyString(val) || val === '-') return '-';
+            if (this.isEmptyString(val) || val === "-") return "-";
             var date = new Date(val);
 
             var y = date.getFullYear();
@@ -550,19 +552,19 @@
                 return null;
             }
             var tzo = -date.getTimezoneOffset(),
-                dif = tzo >= 0 ? '+' : '-',
+                dif = tzo >= 0 ? "+" : "-",
                 pad = function (num) {
                     var norm = Math.floor(Math.abs(num));
-                    return (norm < 10 ? '0' : '') + norm;
+                    return (norm < 10 ? "0" : "") + norm;
                 };
             return date.getFullYear() +
-                '-' + pad(date.getMonth() + 1) +
-                '-' + pad(date.getDate()) +
-                'T' + pad(date.getHours()) +
-                ':' + pad(date.getMinutes()) +
-                ':' + pad(date.getSeconds()) +
+                "-" + pad(date.getMonth() + 1) +
+                "-" + pad(date.getDate()) +
+                "T" + pad(date.getHours()) +
+                ":" + pad(date.getMinutes()) +
+                ":" + pad(date.getSeconds()) +
                 dif + pad(tzo / 60) +
-                ':' + pad(tzo % 60);
+                ":" + pad(tzo % 60);
         },
         truncateTime: function (date) {
             date.setTime(date.getTime() - (-date.getTimezoneOffset() * 60 * 1000));
