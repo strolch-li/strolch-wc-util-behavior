@@ -20,6 +20,14 @@
         hasPrivilege: function (privilege, value) {
             return Strolch.hasRole("StrolchAdmin") || Strolch.hasPrivilege(privilege, value);
         },
+        hasAnyPrivilege: function () {
+            for (var i = 0; i < arguments.length; i++) {
+                if (Strolch.hasPrivilege(arguments[i]))
+                    return true;
+            }
+
+            return false;
+        },
         hasRole: function (name) {
             return Strolch.hasRole("StrolchAdmin") || Strolch.hasRole(name);
         },
