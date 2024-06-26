@@ -160,30 +160,27 @@
                 this.requestErrorToMsg(event);
             }
         },
-        requestErrorToMsg: function (event) {
-
-            var response;
-            if (event.detail.request)
-                response = event.detail.request.xhr.response;
-            else
-                response = event.detail.detail.error.message;
-
-            var msg = "";
-            var isError = false;
-
-            if (response && response.state) {
-                isError = response.state === "EXCEPTION";
+        localizeServerI18nMessage: function (i18n) {
+            var args = [i18n.key];
+            if (i18n.values != null) {
+                Object.keys(i18n.values).forEach(function (key) {
+                    args.push(key);
+                    args.push(i18n.values[key]);
+                });
             }
+            return this.localize.apply(this, args);
+        },
+        getResponseFromEvent: function (event) {
+            if (event.detail.request)
+                return event.detail.request.xhr.response;
+            return event.detail.detail.error.message;
+        },
+        localizeRequestErrorToMsg: function (event) {
+            var response = this.getResponseFromEvent(event);
 
+            var msg;
             if (response && response.i18n) {
-                var args = [response.i18n.key];
-                if (response.i18n.values != null) {
-                    Object.keys(response.i18n.values).forEach(function (key) {
-                        args.push(key);
-                        args.push(response.i18n.values[key]);
-                    });
-                }
-                msg = this.localize.apply(this, args);
+                msg = this.localizeServerI18nMessage(response.i18n);
             } else {
 
                 if (response && response.msg) {
@@ -193,14 +190,7 @@
                         var json = JSON.parse(response);
 
                         if (json && json.i18n) {
-                            var args = [json.i18n.key];
-                            if (json.i18n.values != null) {
-                                Object.keys(json.i18n.values).forEach(function (key) {
-                                    args.push(key);
-                                    args.push(json.i18n.values[key]);
-                                });
-                            }
-                            msg = this.localize.apply(this, args);
+                            msg = this.localizeServerI18nMessage(json.i18n);
                         } else if (json.msg) {
                             msg = json.msg;
                         } else {
@@ -218,6 +208,14 @@
                     msg = "Request Failed and no message available!";
                 }
             }
+
+            return msg;
+        },
+        requestErrorToMsg: function (event) {
+            var response = this.getResponseFromEvent(event);
+
+            var isError = response && response.state && response.state === "EXCEPTION";
+            var msg = this.localizeRequestErrorToMsg(event);
 
             this.fire('strolch-show-dialog', {
                 isError: isError,
