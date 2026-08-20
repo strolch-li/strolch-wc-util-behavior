@@ -1,7 +1,7 @@
 {
   "name": "strolch-wc-util-behavior",
   "description": "Strolch Polymer Util Behaviors",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "authors": [
     "Robert von Burg"
   ],
@@ -20,8 +20,8 @@
   "homepage": "https://github.com/strolch-li/strolch-wc-util-behavior",
   "ignore": [],
   "dependencies": {
-    "strolchjs": "strolch-li/strolchjs#^0.5.5",
-    "strolch-wc-localize-behavior": "strolch-li/strolch-wc-localize-behavior#^1.1.19",
+    "strolchjs": "strolch-li/strolchjs#^0.5.6",
+    "strolch-wc-localize-behavior": "strolch-li/strolch-wc-localize-behavior#^1.1.20",
     "polymer": "Polymer/polymer#^1.12.0"
   }
 }
