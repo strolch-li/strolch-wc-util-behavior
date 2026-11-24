@@ -1,7 +1,7 @@
 {
   "name": "strolch-wc-util-behavior",
   "description": "Strolch Polymer Util Behaviors",
-  "version": "0.3.20",
+  "version": "0.3.21",
   "authors": [
     "Robert von Burg"
   ],
@@ -21,7 +21,7 @@
   "ignore": [],
   "dependencies": {
     "strolchjs": "git@github.com:strolch-li/strolchjs#0.5.8",
-    "strolch-wc-localize-behavior": "git@github.com:strolch-li/strolch-wc-localize-behavior#1.1.23",
+    "strolch-wc-localize-behavior": "git@github.com:strolch-li/strolch-wc-localize-behavior#1.1.24",
     "polymer": "git@github.com:Polymer/polymer#1.12.0"
   }
 }
